@@ -242,6 +242,42 @@ with onto:
             elif self.hasTransitionCondition[0].hasTimeValue:
                 possible_states.append(
                     f'{offset}\tself.wakeupAfter(datetime.timedelta(seconds={iso8601_parser(self.hasTransitionCondition[0].hasTimeValue[0])}), "{sanitizeID(self.hasModelComponentID[0])}")')
+            elif self.hasTransitionCondition[0].hasDurationTimeOutTime:
+                possible_states.append(
+                    f'{offset}\tself.wakeupAfter(datetime.timedelta(seconds={iso8601_parser(self.hasTransitionCondition[0].hasDurationTimeOutTime[0])}), "{sanitizeID(self.hasModelComponentID[0])}")')
+            return '\n'.join(possible_states)
+
+    class TimerTransition(Thing):
+        def getPythonClassDefinitionString(self):
+            return f'\nclass {sanitizeID(self.hasModelComponentID[0])}:' \
+                   '\n\tdef __init__(self, content):' \
+                   '\n\t\tself.content = content' \
+                   '\n\tdef __str__(self):' \
+                   '\n\t\treturn str(self.content)' \
+                   f'\nclass {sanitizeID(self.hasModelComponentID[0])}_res:' \
+                   '\n\tdef __init__(self, content):' \
+                   '\n\t\tself.content = content' \
+                   '\n\tdef __str__(self):' \
+                   '\n\t\treturn str(self.content)'
+
+
+        def getPythonFunctionDefinitionString(self, offset=""):
+            possible_states = list()
+
+            possible_states.append(
+                f'\n{offset}\tself.timeout_states["{sanitizeID(self.hasModelComponentID[0])}"]=common.{sanitizeID(self.hasModelComponentID[0])}'
+                f'\n{offset}\tself.allowed_states.append("{sanitizeID(self.hasTargetState[0].hasModelComponentID[0])}")'
+
+            )
+            if self.hasTransitionCondition[0].hasDayTimeDurationTimeOutTime:
+                possible_states.append(
+                    f'{offset}\tself.wakeupAfter(datetime.timedelta(seconds={self.hasTransitionCondition[0].hasDayTimeDurationTimeOutTime[0]}), "{sanitizeID(self.hasModelComponentID[0])}")')
+            elif self.hasTransitionCondition[0].hasTimeValue:
+                possible_states.append(
+                    f'{offset}\tself.wakeupAfter(datetime.timedelta(seconds={iso8601_parser(self.hasTransitionCondition[0].hasTimeValue[0])}), "{sanitizeID(self.hasModelComponentID[0])}")')
+            elif self.hasTransitionCondition[0].hasDurationTimeOutTime:
+                possible_states.append(
+                    f'{offset}\tself.wakeupAfter(datetime.timedelta(seconds={iso8601_parser(self.hasTransitionCondition[0].hasDurationTimeOutTime[0])}), "{sanitizeID(self.hasModelComponentID[0])}")')
             return '\n'.join(possible_states)
 
 
@@ -296,7 +332,7 @@ with onto:
             possible_states.append(f'\ttmp["instance_name"]= self.instance_name')
             possible_states.append(f'\ttmp["instance_id"]= self.instance_id')
             for transition in self.hasOutgoingTransition:
-                if type(transition) is onto.DayTimeTimerTransition:
+                if type(transition) is onto.DayTimeTimerTransition or type(transition) is onto.TimerTransition:
                     possible_states.append(transition.getPythonFunctionDefinitionString())
             return '\n'.join(possible_states)
 
@@ -432,7 +468,7 @@ with onto:
                     f'\n\t\t\tdel self.pool[idx]'
                 )
                 for outgoing_transition in self.hasOutgoingTransition:
-                    if type(outgoing_transition) is onto.DayTimeTimerTransition:
+                    if type(outgoing_transition) is onto.DayTimeTimerTransition or  type(outgoing_transition) is onto.TimerTransition:
                         possible_states.append(outgoing_transition.getPythonFunctionDefinitionString())
             return '\n'.join(possible_states)
 
@@ -532,6 +568,8 @@ def codegen(filename, modelID, zipfilename="src.zip", ):
     for i in model.search(type=onto.CommunicationTransition):
         commonpy.append(i.getPythonClassDefinitionString())
     for i in model.search(type=onto.DayTimeTimerTransition):
+        commonpy.append(i.getPythonClassDefinitionString())
+    for i in model.search(type=onto.TimerTransition):
         commonpy.append(i.getPythonClassDefinitionString())
     for i in model.search(type=onto.DoTransition):
         commonpy.append(i.getPythonClassDefinitionString())
