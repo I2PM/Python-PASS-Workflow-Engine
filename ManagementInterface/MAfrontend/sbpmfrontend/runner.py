@@ -41,7 +41,7 @@ class ActorSystemManager:
     def startActorSystem(self):
         if self.__asys is None:
             capabilities = dict([('Admin Port', 1901),
-                                 ('Convention Address.IPv4', ('127.0.0.1', 1900)),
+                                 ('Convention Address.IPv4', ('actorsystem', 1900)),
                                  ])
             asys = ActorSystem('multiprocTCPBase', capabilities)
             sa = asys.createActor(SimpleSourceAuthority)

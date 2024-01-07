@@ -1,0 +1,21 @@
+version: '3.8'
+volumes:
+  lldap_data:
+    driver: local
+services:
+  web:
+    build:
+      context: ./ManagementInterface/MAfrontend
+      dockerfile: Dockerfile
+      args:
+        - DJANGO_SUPERUSER_USERNAME=admin
+        - DJANGO_SUPERUSER_PASSWORD=admin123456!
+        - DJANGO_SUPERUSER_EMAIL=admin@example.com
+    command: python manage.py runserver 0.0.0.0:8081
+    ports:
+      - 8081:8081
+    depends_on:
+      - actorsystem
+  actorsystem:
+    build: ./Server
+    command: python3 start.py

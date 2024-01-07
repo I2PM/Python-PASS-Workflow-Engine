@@ -22,5 +22,6 @@ if __name__ == "__main__":
     asys.tell(sa, True)
     asys.createActor(mydirector.MyDirector, globalName="MyDirector")
     asys.createActor(myIOActor.MyIOActor, globalName="MyIOActor")
-    input("Enter zum beenden....")
+    asys.listen()
+#input("Enter zum beenden....")
     asys.shutdown()

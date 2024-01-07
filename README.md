@@ -1,6 +1,7 @@
-# Code generator based workflow engine for PASS models
+# Code generator based workflow engine prototype for PASS models
 
-This prototype aims to execute PASS models and was developed as part of a Masters Thesis.
+This prototype aims to execute PASS models in a prototypical manner and is not suited for any kind of productive use.
+
 Currently the supported elements are:
 - FullySpecifiedSubjects
 - Messages without priorities
@@ -8,7 +9,7 @@ Currently the supported elements are:
 - Send-states with one outgoing Message
 - Receive-states without priorities
 - Do-states as user interaction
-- DayTimeTimerTransition
+- DayTimeTimerTransition and TimerTransition
 
 ## Code structure
 
@@ -22,57 +23,14 @@ Besides the basic django structure, the code generator as well as the runner scr
 The server folder consists of the director and IO actor source code as well as a startup script for the actorsystem.
 
 ## Installation steps for the prototype
-This manual assumes a working Python 3.9+ installation (including PIP package manager). Furhter it is assumed that Python as well as Pip are within the PATH variable. The following commands are all for Windows.
-
-### Create Python VENV
-
-Creating a Python venv is depending on the operating system.
-For windows the following commands are used:
+This manual assumes a working installation of Docker and Docker-Compose (Podman could work, but is not tested). To start the Prototype just run
 ```cmd
-python -m venv testvenv
-.\testvenv\Scripts\activate
+docker-compose up
 ```
-The second command activates the venv, which is necessary for the management interface as well as the server side actor system. All furhter commands are executed with activated venv.
+The prototype will run in foreground and is available via http://127.0.0.1:8081. To stop the prototype, just use ctrl+C.
 
-For your operating system please consult the manual (e.g. via [Python tutorial](https://docs.python.org/3/tutorial/venv.html))
+For manual installation, the process is described in the Dockerfiles referenced within the docker compose file and can be reproduced on a linux machine as well (additionally the actor system address the runner connects to has to be changed in ManagementInterface/MAfrontend/sbpmfrontend/runner.py).
 
-### Installing dependencies
-
-Within the .\ManagementInterface\MAfrontend directory a requirements.txt file exists. It includes all dependencies for this project. They need to be installed with the following command (while the venv is activated!).
-```cmd
-pip install -r requirements.txt
-```
-### Creating the database
-
-It is necessary to create the database before the initial startup of the management interface. A SQLite DB is used.
-The following commands create the DB and also start a prompt for admin user creation.
-```cmd
-python manage.py makemigrations sbpmfrontend
-python manage.py migrate
-python manage.py createsuperuser
-```
-## Starting the server side actor system
-
-Within the Server directory, a startscript exists. It can be started as follows and it is necessary to perform this operation before the management interface is started. This operation blocks the current shell, therefore it is required to use a separate command window for this operation.
-```cmd
-cd Server
-python start.py
-```
-
-## Starting the management interface
-
-Back in the original window (in the .\ManagementInterface\MAfrontend directory), the management interface can now be started as follows:
-```cmd
-python manage.py runserver
-```
-This command assumes that port 8000 is avaiable. After this command is executed, the management interface is available under http://127.0.0.1:8000/sbpm/ .
-
-## Stopping the prototype
-
-Initially it is necessary to stop the operation of the management interface by pressing STRG+C in the command line.
-For the server side actor system (second window) a simple ENTER press is sufficient (do not press STRG+C).
-Afterwards the following command needs to be executed in the management interface terminal (in the .\ManagementInterface\MAfrontend directory):
-
-```cmd
-python stop_runner.py
-```
+## Important aspects
+Within the docker compose file, a default user is specified. Please change accordingly. Furthermore, the application runs with Debug mode enabled to enable the Django admin interface available under http://127.0.0.1:8081/admin/.
+For LDAP integration please refer to the code in /ManagementInterface/MAfrontend/MAfrontend/settings.py and configure it accordingly (documentation of the module used can be found here: https://django-auth-ldap.readthedocs.io/en/4.6.0/).

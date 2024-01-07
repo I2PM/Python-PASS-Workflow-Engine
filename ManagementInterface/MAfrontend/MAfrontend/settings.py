@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
+import ldap
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -111,7 +113,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'sbpm/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'root')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -135,3 +137,40 @@ MESSAGE_TAGS = {
         messages.WARNING: 'alert-warning',
         messages.ERROR: 'alert-danger',
  }
+CSRF_TRUSTED_ORIGINS = ["https://127.0.0.1:8999"]
+
+#AUTHENTICATION_BACKENDS = [
+#    'django_auth_ldap.backend.LDAPBackend',
+#    'django.contrib.auth.backends.ModelBackend',
+#]
+
+#AUTH_LDAP_SERVER_URI = "ldap://lldap:3890"
+
+#AUTH_LDAP_BIND_DN = "uid=admin,ou=people,dc=example,dc=com"
+#AUTH_LDAP_BIND_PASSWORD = os.getenv("LDAP_BIND_PW")
+#AUTH_LDAP_USER_SEARCH = LDAPSearch(
+#    "ou=people,dc=example,dc=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+#)
+
+#AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+#    "ou=groups,dc=example,dc=com",
+#    ldap.SCOPE_SUBTREE,
+#    "(objectClass=groupOfNames)",
+#)
+#AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+
+#AUTH_LDAP_USER_ATTR_MAP = {
+#    "first_name": "givenName",
+#    "last_name": "sn",
+#    "email": "mail",
+#}
+
+#AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+#    "is_active": "cn=active,ou=groups,dc=example,dc=com",
+#    "is_staff": "cn=staff,ou=groups,dc=example,dc=com",
+#    "is_superuser": "cn=superuser,ou=groups,dc=example,dc=com",
+#}
+#AUTH_LDAP_ALWAYS_UPDATE_USER = True
+#AUTH_LDAP_FIND_GROUP_PERMS = True
+#AUTH_LDAP_CACHE_TIMEOUT = 3600
+
