@@ -1,8 +1,8 @@
 wheel
-django==4.1.10
+django==4.2.20
 django-crispy-forms==1.14.0
-lxml==4.9.3
-Owlready2==0.40
-thespian>=3.10.7
-requests==2.31.0
-django-auth-ldap==4.6.0
+lxml==5.4.0
+Owlready2==0.47
+thespian==4.0.1
+requests>=2.31.0
+django-auth-ldap==5.1.0

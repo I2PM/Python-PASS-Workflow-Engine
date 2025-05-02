@@ -1,5 +1,5 @@
 
-FROM python:latest
+FROM python:3.13
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install libsasl2-dev python3-dev libldap2-dev libssl-dev -y
