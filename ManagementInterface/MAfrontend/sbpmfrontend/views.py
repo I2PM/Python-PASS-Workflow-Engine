@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
+from django.contrib.auth.decorators import login_required
 
 from .codegen import *
 from .models import *
@@ -103,7 +104,6 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
-
 def handle_uploaded_process_model(f, name):
     filename = f.name
     process_model = ProcessModel.objects.create(file_name=filename, name=name)
@@ -118,7 +118,7 @@ def handle_uploaded_process_model(f, name):
             SbpmActor.objects.create(name=name, display_name=display_name, process_model=process_model))
     return HttpResponseRedirect('/sbpm/model/' + str(process_model.id) + '/')
 
-
+@login_required
 def upload_process_model(request):
     if request.method == 'POST':
         form = UploadForm(request.POST, request.FILES)
@@ -128,7 +128,7 @@ def upload_process_model(request):
         form = UploadForm()
     return render(request, 'sbpmfrontend/upload.html', {'form': form})
 
-
+@login_required
 def edit_process_model(request, process_model_id):
     current_instance = get_object_or_404(ProcessModel, pk=process_model_id)
     can_start = request.user.id in SbpmActor.objects.filter(process_model_id=current_instance.id).filter(
@@ -148,7 +148,7 @@ def edit_process_model(request, process_model_id):
         "can_start": can_start
     })
 
-
+@login_required
 def edit_actor(request, actor_id):
     current_instance = get_object_or_404(SbpmActor, pk=actor_id)
     if request.method == 'POST':
@@ -164,7 +164,7 @@ def edit_actor(request, actor_id):
         "model": current_instance
     })
 
-
+@login_required
 def response_user_interaction(request, iorequest_id):
     io_request = IORequest.objects.get(pk=iorequest_id)
     if io_request.served:
@@ -172,7 +172,7 @@ def response_user_interaction(request, iorequest_id):
     else:
         return HttpResponseNotFound("Not ready yet or does not exist")
 
-
+@login_required
 def enter_data(request, iorequest_id):
     try:
         io_request = ask_pending_requests().get(iorequest_id)
@@ -198,7 +198,7 @@ def enter_data(request, iorequest_id):
                   {'form': form, 'io_read': json_data_dict.get("read"), "io_name": json_data_dict.get("state_label"),
                    "id": iorequest_id})
 
-
+@login_required
 def load_source(request, process_model_id):
     try:
         process_model = get_object_or_404(ProcessModel, pk=process_model_id)
@@ -212,7 +212,7 @@ def load_source(request, process_model_id):
         messages.error(request, "Error, something is bad: " + str(e))
     return HttpResponseRedirect("/sbpm/model/" + str(process_model.id) + '/')
 
-
+@login_required
 def start_instance(request, process_model_id):
     try:
         process_model = get_object_or_404(ProcessModel, pk=process_model_id)
@@ -229,7 +229,7 @@ def start_instance(request, process_model_id):
         messages.error(request, "Error, something is bad: " + str(e))
     return HttpResponseRedirect("/sbpm/model/" + str(process_model.id) + '/')
 
-
+@login_required
 def recompile(request, process_model_id):
     process_model = ProcessModel.objects.get(pk=process_model_id)
     filepath = "media/" + str(process_model.id)
@@ -238,7 +238,7 @@ def recompile(request, process_model_id):
     messages.success(request, "Success!")
     return HttpResponseRedirect('/sbpm/model/' + str(process_model.id) + '/')
 
-
+@login_required
 def manage_running(request):
     try:
         dict_of_hashes = ask_running_actors()

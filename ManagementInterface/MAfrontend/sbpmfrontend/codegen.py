@@ -110,7 +110,7 @@ with onto:
             for j in self.hasDataDefinition:
                 for k in j.is_a:
                     if type(k) == owlready2.class_construct.Restriction:
-                        variables[k.property._python_name] = k.property.label[0]
+                        variables[k.property._python_name] = str(k.property.label.first())
                         datatypes[k.property._python_name] = typeStrMapping(k.value)
             return variables, datatypes
 

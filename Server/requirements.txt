@@ -1,2 +1,2 @@
-thespian>=3.10.7
-requests==2.31.0
+thespian==4.0.1
+requests>=2.31.0
